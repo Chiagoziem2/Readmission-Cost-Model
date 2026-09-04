@@ -1,0 +1,6 @@
+data/*.csv
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+results.json
