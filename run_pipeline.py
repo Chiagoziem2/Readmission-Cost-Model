@@ -90,6 +90,10 @@ def main():
 
     grid, costs = ca.cost_vs_threshold(p_best, y_te)
 
+    # persist test-set predictions + outcomes for downstream analyses (e.g. sensitivity)
+    pd.DataFrame({"y_true": y_te.values, "p": p_best}).to_csv(
+        os.path.join(HERE, "test_predictions.csv"), index=False)
+
     # figures
     plots.roc_pr(preds, y_te.values, os.path.join(FIGS, "roc_pr.png"))
     plots.calibration(preds, y_te.values, os.path.join(FIGS, "calibration.png"))

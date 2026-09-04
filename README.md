@@ -73,6 +73,47 @@ whether targeting beats inaction at all is highly sensitive to the (illustrative
 economic inputs. A portfolio version that reported a big "savings!" number would
 be hiding this.
 
+## How sensitive is that conclusion? (economic sensitivity analysis)
+
+The base-case finding above rests on two assumed numbers: the intervention's
+cost ($1,200) and its effectiveness (RRR = 0.25). Neither is estimable from
+this dataset. Rather than presenting one number as if it were solid, the
+sensitivity analysis maps out **when targeting is worth doing at all**, using
+the same calibrated test-set predictions (no retraining).
+
+```bash
+python run_pipeline.py       # must run first — saves test_predictions.csv
+python run_sensitivity.py    # -> figures/sensitivity_heatmap.png, breakeven_curve.png
+```
+
+![Sensitivity heatmap](figures/sensitivity_heatmap.png)
+![Breakeven curve](figures/breakeven_curve.png)
+
+**Findings:**
+- Across 380 (RRR, intervention-cost) combinations tested, targeting beats
+  doing nothing in **~66%** of them. It is not a universal win — it depends on
+  getting the economics roughly right.
+- The **base-case assumption sits just inside the profitable region**, not deep
+  within it: at RRR = 0.25, the break-even intervention cost is only
+  moderately above the assumed $1,200. A program that costs 50% more than
+  assumed, or an intervention that turns out less effective than a
+  transitional-care trial suggests, could flip the conclusion.
+- Savings are **floored at $0, never negative** — a structural property of this
+  design, not an assumption. When the cost-optimal threshold exceeds the
+  model's achievable predicted probabilities (~0.28 in the base case), the
+  policy enrols nobody, which costs exactly the same as doing nothing. The
+  model can fail to find a profitable target group; it cannot be talked into
+  actively losing money relative to inaction.
+- The break-even curve is **step-shaped, not smooth** — a real consequence of
+  the model producing a finite set of ~19,773 distinct probability values on
+  this test set, not noise or a plotting artefact.
+
+**What this analysis does not do:** it does not estimate RRR or the true
+intervention cost — those still have to come from a cited trial and a real
+program budget. What it does is make the base-case conclusion falsifiable and
+show its margin, rather than presenting a single "savings: $X" figure as if it
+were exact.
+
 ## Run it
 
 ```bash
